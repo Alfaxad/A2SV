@@ -37,9 +37,10 @@
         const maxRadius = 200;
         const maxClusters = 20;
         const minClusterSize = 50;
-        const predefinedColors = ['green', 'red', 'orange', 'cyan', 'magenta', 'lavender', 'teal'];
+        const shapes = ['circle', 'square', 'triangle', 'circle', 'square', 'triangle', 'circle'];
+        const predefinedColors = ['red', 'white', 'yellow', 'magenta', 'cyan', 'green', 'blue'];
         const settings = {
-            seed: 91651088029,
+            seed: 187651088029,
             fps: 0,
             atoms: {
                 count: 500,  // Per Color
@@ -316,14 +317,28 @@
             m.fillRect(x - radius, y - radius, 2 * radius, 2 * radius);
         }
 
-        // Draw a circle
-        function drawCircle(x, y, color, radius, fill = true) {
+        function drawCircle(x, y, color, radius) {
             m.beginPath();
-            m.arc(x, y, radius, 0 * Math.PI, 2 * Math.PI);  // x, y, radius, ArcStart, ArcEnd
+            m.arc(x, y, radius, 0, 2 * Math.PI);
             m.closePath();
             m.strokeStyle = m.fillStyle = color;
-            fill ? m.fill() : m.stroke()
-        };
+            m.fill();
+        }
+        function drawSquare(x, y, color, radius) {
+            m.fillStyle = color;
+            m.fillRect(x - radius, y - radius, 2 * radius, 2 * radius);
+        }
+
+        function drawTriangle(x, y, color, radius) {
+            m.fillStyle = color;
+            m.beginPath();
+            m.moveTo(x, y - radius);
+            m.lineTo(x + radius, y + radius);
+            m.lineTo(x - radius, y + radius);
+            m.closePath();
+            m.fill();
+        }
+
 
         // Draw a line between two atoms
         function drawLineBetweenAtoms(ax, ay, bx, by, color) {
@@ -574,12 +589,10 @@
             applyRules();
             // Draw Atoms
             for (const a of atoms) {
-                if (settings.drawings.circle) {
-                    drawCircle(a[0], a[1], settings.colors[a[4]], settings.atoms.radius);
-                } else {
-                    drawSquare(a[0], a[1], settings.colors[a[4]], settings.atoms.radius);
-                }
+                const shape = shapes[a[4]];  // Get the shape for the current particle type
+                drawParticle(a[0], a[1], settings.colors[a[4]], shape, settings.atoms.radius);
             }
+
             if (settings.drawings.clusters) {
                 trackClusters();
                 drawClusters();
